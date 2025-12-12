@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的記帳App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .balance-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      padding: 25px;
+      color: white;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .balance-amount {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .balance-stats {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .stat-item {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .stat-value.income {
+      color: #4ade80;
+    }
+
+    .stat-value.expense {
+      color: #f87171;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-income {
+      background: #4ade80;
+      color: white;
+    }
+
+    .btn-income:hover {
+      background: #22c55e;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(74, 222, 128, 0.4);
+    }
+
+    .btn-expense {
+      background: #f87171;
+      color: white;
+    }
+
+    .btn-expense:hover {
+      background: #ef4444;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(248, 113, 113, 0.4);
+    }
+
+    .transactions-section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .transaction-item {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .transaction-item:hover {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      transform: translateX(5px);
+    }
+
+    .transaction-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .transaction-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .transaction-icon.income {
+      background: #dcfce7;
+      color: #22c55e;
+    }
+
+    .transaction-icon.expense {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    .transaction-details h3 {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .transaction-details p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .transaction-amount {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .transaction-amount.income {
+      color: #22c55e;
+    }
+
+    .transaction-amount.expense {
+      color: #ef4444;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      .balance-amount {
+        font-size: 30px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 標題區 -->
+    <div class="header">
+      <h1>💰 我的記帳本</h1>
+      <p>輕鬆管理你的收支</p>
+    </div>
+
+    <!-- 餘額卡片 -->
+    <div class="balance-card">
+      <div class="balance-label">總餘額</div>
+      <div class="balance-amount">NT$ 12,500</div>
+      <div class="balance-stats">
+        <div class="stat-item">
+          <div class="stat-label">本月收入</div>
+          <div class="stat-value income">+8,000</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">本月支出</div>
+          <div class="stat-value expense">-3,200</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作按鈕 -->
+    <div class="action-buttons">
+      <button class="btn btn-income">
+        <span>📈</span>
+        <span>新增收入</span>
+      </button>
+      <button class="btn btn-expense">
+        <span>📉</span>
+        <span>新增支出</span>
+      </button>
+    </div>
+
+    <!-- 交易記錄 -->
+    <div class="transactions-section">
+      <div class="section-title">
+        <span>📋</span>
+        <span>最近交易</span>
+      </div>
+      
+      <div class="transaction-list">
+        <!-- 交易項目 1 -->
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <div class="transaction-icon income">💼</div>
+            <div class="transaction-details">
+              <h3>薪水收入</h3>
+              <p>2024-12-01</p>
+            </div>
+          </div>
+          <div class="transaction-amount income">+NT$ 45,000</div>
+        </div>
+
+        <!-- 交易項目 2 -->
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <div class="transaction-icon expense">🍔</div>
+            <div class="transaction-details">
+              <h3>午餐</h3>
+              <p>2024-12-10</p>
+            </div>
+          </div>
+          <div class="transaction-amount expense">-NT$ 150</div>
+        </div>
+
+        <!-- 交易項目 3 -->
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <div class="transaction-icon expense">🚌</div>
+            <div class="transaction-details">
+              <h3>交通費</h3>
+              <p>2024-12-09</p>
+            </div>
+          </div>
+          <div class="transaction-amount expense">-NT$ 80</div>
+        </div>
+
+        <!-- 交易項目 4 -->
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <div class="transaction-icon income">💰</div>
+            <div class="transaction-details">
+              <h3>兼職收入</h3>
+              <p>2024-12-08</p>
+            </div>
+          </div>
+          <div class="transaction-amount income">+NT$ 2,000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
